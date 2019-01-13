@@ -1,0 +1,924 @@
+<!--------------------------------------------------------------------------->
+<!--                           INTRODUCTION
+
+ The Code Project article submission template (HTML version)
+
+Using this template will help us post your article sooner. To use, just
+follow the 3 easy steps below:
+
+     1. Fill in the article description details
+     2. Add links to your images and downloads
+     3. Include the main article text
+
+That's all there is to it! All formatting will be done by our submission
+scripts and style sheets.
+
+-->
+<!--------------------------------------------------------------------------->
+<!--                        IGNORE THIS SECTION                            -->
+<html>
+<head>
+<title>The Code Project</title>
+<style>
+BODY, P, TD { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt }
+H2,H3,H4,H5 { color: #ff9900; font-weight: bold; }
+H2 { font-size: 13pt; }
+H3 { font-size: 12pt; }
+H4 { font-size: 10pt; color: black; }
+PRE { BACKGROUND-COLOR: #FBEDBB; FONT-FAMILY: "Courier New", Courier, mono; WHITE-SPACE: pre; }
+CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono; }
+</style>
+<link rel="stylesheet" type=text/css href="http://www.codeproject.com/styles/global.css">
+</head>
+<body bgcolor="#FFFFFF" color=#000000>
+<!--------------------------------------------------------------------------->
+
+
+<!-------------------------------     STEP 1      --------------------------->
+<!--  Fill in the details (CodeProject will reformat this section for you) -->
+
+<pre>
+Title:       A Status Bar Text Provider for Menu Items and Form Controls
+Author:      Eric Woodruff
+Email:       Eric@EWoodruff.us
+Environment: Visual Studio .NET, Windows Forms, C#, VB.NET
+Keywords:    statusbar, status strip, message, IExtenderProvider
+Level:       Intermediate
+Description: A status bar text provider for menu items and form controls in
+             Windows Forms applications similar to the feature found in MFC
+             and Microsoft Access applications.
+Section      .NET General
+SubSection   Windows Forms
+</pre>
+
+<!-------------------------------     STEP 2      --------------------------->
+<!--  Include download and sample image information.                       -->
+
+<ul class=download>
+<li><a href="StatusBarText.zip">Download source - 208 Kb</a></li>
+</ul>
+
+<!-- Article image -->
+<p><img src='StatusBarText.jpg' alt='Status Bar Text Examples' height='154' width='416'></p>
+
+<!-------------------------------     STEP 3      --------------------------->
+<!--  Add the article text. Please use simple formatting (<h2>, <p> etc)   -->
+
+<h2>Introduction</h2>
+In an MFC application, the status bar text for menu items is a built-in
+feature. In the menu resource editor, you specify the text and, at runtime
+as you move from menu item to menu item, a description will appear in the
+status bar for each one. By default, this functionality is missing from
+.NET Windows Forms applications. However, by using a component that
+implements the <code>IExtenderProvider</code> interface, it is quite easy
+to add this feature complete with design-time support and only requires you
+to manually write a line or two of actual code. As a bonus, you can also
+use it to add status bar text for any control on a form similar to the
+<code>StatusBarText</code> property in controls found in Microsoft
+Access.
+
+<h2>Status Bar Text Provider Features</h2>
+The <code>StatusBarTextProvider</code> is an
+<code>IExtenderProvider</code> component that allows you to add status bar
+text for menu items and form controls. When built for use with .NET 2.0, it
+also supports status text on menu strip, tool strip, and status strip
+items.  It provides the following features:
+
+<ul>
+    <li>When the component is dropped on the form, <code>MenuItem</code>
+components, all <code>Control</code> type items, and
+<code>ToolStripItem</code> components are extended with an extra
+<code>StatusBar</code> category in their property window containing the
+<code>StatusBarText</code> and <code>ShowAsBlank</code> properties. The
+following items are not extended: <code>Form</code>, <code>Label</code>,
+<code>PictureBox</code>, <code>ProgressBar</code>, <code>ScrollBar</code>,
+<code>Splitter</code>, <code>StatusBar</code>, <code>ToolBar</code>,
+<code>ToolStrip</code> and controls derived from them. The <code>Form</code>
+contains controls and the other controls cannot receive the focus needed to
+display the text so there is no point in giving them status bar text. The
+exception to the above rule is <code>LinkLabel</code> which can receive the
+focus and thus can be extended.</li>
+
+    <li>The <code>StatusBarText</code> property is used to set the text to
+display in the status bar when the item has the focus.</li>
+
+    <li>The <code>ShowAsBlank</code> property can be used to have the item
+show a blank status bar when it has the focus. This property is necessary
+as the Visual Studio .NET designer converts strings of spaces to an empty
+string and thus it does not serialize the blank string to code. Setting
+this property to <code lang=cs>true</code> obtains the desired result of
+blank status bar text for the item.</li>
+
+    <li>The provider can use a common status bar on the application's main
+form (i.e. an MDI container) or it can use a status bar local to the form
+that contains it (i.e. a dialog box).</li>
+
+    <li>The provider can be configured to display the status bar text in
+any panel defined in the status bar. If the status bar does not have panels
+defined, it will use the status bar's <code>Text</code> property instead.</li>
+
+    <li>When built for use with .NET 2.0, you can specify any
+<code>ToolStripStatusLabel</code> component as the place to display the text.
+Note that since status labels can appear in toolbars as well, you are not
+limited to displaying text in the application status bar for items.</li>
+
+    <li>The provider works with modal and non-modal forms in single
+document interface (SDI) and multiple document interface (MDI)
+applications.</li>
+
+    <li>Status bar text is correctly restored to its prior value when
+leaving a control, closing a form, switching between forms, and when
+entering or exiting a menu.</li>
+
+    <li>Status bar text can be set on container controls such as
+<code>GroupBox</code> and <code>Panel</code> and on classes derived from
+<code>UserControl</code> to provide status bar text for controls within
+them that do not have status bar text specified for themselves.</li>
+
+    <li><code>UserControl</code> objects can supply their own status bar text
+provider to define status bar text for the controls that they contain.</li>
+
+    <li>When built for use with .NET 2.0, two extra static properties are
+provided (<code>StatusLabel</code> and <code>ProgressBar</code>) that can be
+used to gain access to a status label and progress bar on the main status
+strip for the application to provide progress feedback for long running
+processes from anywhere within the application.  In order to make using them
+easier three overloaded methods are also provided:
+    <ul class="method">
+        <li><code>InitializeProgressBar</code> - This is used to initialize
+the status label and progress bar for use (six overloads).</li>
+        <li><code>UpdateProgress</code> - This is used to update the status
+label and progress bar as you move through an operation (four overloads).</li>
+        <li><code>ResetProgressBar</code> - This is used to reset the status
+label and progress bar when done (2 overloads).</li>
+    </ul>
+</ul>
+
+<p>The supplied demo contains the assembly, a help file, and a demo
+application. Versions are supplied for .NET 1.1 and .NET 2.0.  See the help
+file for details on installing the assembly in the Visual Studio .NET tool
+box. You can also extract the <i>StatusBarTextProvider.cs</i> source file
+for use in your own projects or control libraries.</p>
+
+<h2>Using the Assembly in your Projects</h2>
+The classes can be found in the assembly
+<i>EWSoftware.StatusBarText.dll</i>. In order to use the classes, add a
+reference to it in your project. The help file contains details on how to
+do this if you need it. In the code modules that use classes from the
+<code>EWSoftware.StatusBarText</code> namespace, you will have to add a
+<code lang=cs>using</code> statement (<code lang=vbnet>Imports</code> in
+VB.NET) for the <code>EWSoftware.StatusBarText</code> namespace.
+
+<p>Naturally, you must add a status bar control (.NET 1.1) or a status
+strip control containing at least one status label (.NET 2.0) to your form.
+
+<h3>.NET 1.1 Setup</h3>
+To define the common application status bar used by all instances of
+<code>StatusBarTextProvider</code> and optionally the display panel to use,
+add code similar to the following to your main form's constructor to set
+the static <code>ApplicationStatusBar</code> and
+<code>ApplicationDisplayPanel</code> properties:
+
+<pre lang=cs>
+// Define the default status bar to use in
+// the main form's constructor
+public MainForm()
+{
+    InitializeComponent();
+
+    // Tell the StatusBarTextProvider component the status bar to use
+    StatusBarTextProvider.ApplicationStatusBar = sbStatusBar;
+
+    // You can also use any panel you like. The default is zero
+    // (the left-most panel). For the demo, we'll use the one
+    // in the middle.
+    StatusBarTextProvider.ApplicationDisplayPanel = 1;
+}
+</pre>
+
+<p>If your status bar control does not contain panels, you can omit setting
+the <code>ApplicationDisplayPanel</code> property and the provider will use
+the status bar's <code>Text</code> property to display the text
+instead.</p>
+
+<h3>.NET 2.0 Setup</h3>
+Although not formally deprecated, the standard <code>MainMenu</code>,
+<code>ToolBar</code>, <code>StatusBar</code> controls have been replaced by
+the <code>MenuStrip</code>, <code>ToolStrip</code>, and
+<code>StatusStrip</code> controls.  In fact, the old controls do not appear
+in the toolbox by default.  When you get time, it would be a good idea to
+update any existing applications to use the newer controls as they provide
+some new features such as the ability to put text boxes, combo boxes, or
+progress bar controls directly in the tool strips and status strips and to
+have images on the menu items.
+
+<p>When using a status strip, you specify the status label tool strip item
+used by all instances of <code>StatusBarTextProvider</code> rather than a
+status bar component.  Add code similar to the following to your main
+form's constructor to set the static <code>ApplicationStatusBar</code>
+property.  If your status strip also contains a label and/or progress bar
+tool strip item, you can set the static <code>StatusLabel</code> and
+<code>ProgressBar</code> properties as well to provide all forms in your
+application convenient access to them and to make use of the status methods
+for them on the provider as noted earlier.</p>
+
+<pre lang=cs>
+// Define the default status strip label to use in
+// the main form's constructor.
+public MainForm()
+{
+    InitializeComponent();
+
+    // Tell the StatusBarTextProvider component the component
+    // to use to display the text.  When using a tool strip
+    // component, the ApplicationDisplayPanel property is ignored.
+    StatusBarTextProvider.ApplicationStatusBar = tslStatusText;
+
+    // Define the status label and progress bar too.  This allows
+    // easy access to those items from anywhere within the
+    // application.
+    StatusBarTextProvider.StatusLabel = tslProgressNote;
+    StatusBarTextProvider.ProgressBar = tspbProgressBar;
+}
+</pre>
+
+<p>Since a tool strip item is used in this situation, the
+<code>ApplicationDisplayPanel</code> property is always ignored.
+
+<h3>The Instance Status Bar</h3>
+Optionally, you can use the <code>InstanceStatusBar</code> and
+<code>InstanceDisplayPanel</code> properties in code to override the
+application-level status bar and display panel settings on a form-by-form
+basis. The example code below is from the demo and is used to switch
+between using the child form's status bar and the main form's status bar.
+<code>sbMessage</code> is the status bar text provider for the child form
+and <code>ucDemo.StatusBarTextProvider</code> is used to access the status
+bar text provider for a user control that appears on the child form.
+
+<pre lang=cs>
+private void chkUseDialog_CheckedChanged(object sender, System.EventArgs e)
+{
+    if(chkUseDialog.Checked)
+    {
+        // Use the dialog box's status bar when checked
+        sbMessage.InstanceStatusBar = sbDialog;
+        ucDemo.StatusBarTextProvider.InstanceStatusBar = sbDialog;
+
+        // Make the instance default text the same for any nested
+        // status bar text providers.  If not, they pick up the
+        // status bar text of the current control as the default.
+        ucDemo.StatusBarTextProvider.InstanceDefaultText =
+            sbMessage.InstanceDefaultText;
+    }
+    else
+    {
+        // Go back to using the main form's status bar
+        sbMessage.InstanceStatusBar = null;
+        ucDemo.StatusBarTextProvider.InstanceStatusBar = null;
+    }
+}
+</pre>
+
+<h2>Design-time Support</h2>
+To use the <code>StatusBarTextProvider</code>, simply drag it from the
+toolbox and drop it on your form. Once done, all <code>MenuItem</code>
+components, <code>Control</code> type objects, and
+<code>ToolStripItem</code> components on the form will have an extra
+<code>StatusBar</code> category in their property window. Using it, you can
+set the <code>StatusBarText</code> and <code>ShowAsBlank</code>
+properties.
+
+<p>Normally, you will just enter a message to display in the
+<code>StatusBarText</code> property. As noted above, the
+<code>ShowAsBlank</code> property exists so that in the rare event when you
+want a blank status bar for an item, you can set this property to <code
+lang=cs>true</code>. The designer converts a string containing nothing but
+spaces to an empty string. Since this is the default value, it does not get
+serialized to code thus the extra property is needed.</p>
+
+<h2>Status Bar Text on TabControl and TabPage Controls</h2>
+<code>TabControl</code> and <code>TabPage</code> controls do not always
+reliably show their status bar text due to the way they handle the focus.
+Steps have been taken to allow status bar text on these controls but there
+are a couple of known problems with no workarounds:
+
+<ul>
+    <li>First and foremost is the requirement that you set the
+<code>ShowAsBlank</code> property to <code lang=cs>true</code> or define
+some <code>StatusBarText</code> for the <code>TabControl</code> itself so
+that status bar text can be displayed for the individual tab pages. This
+refers to the text shown if a control on a page has no status bar text or
+when the tab itself has the focus. As with other container controls, if you
+do not define status bar text for the tab pages, the status bar text for
+the tab control will be shown instead.
+    <li>The tab control will not show the status bar text if you use
+Shift+Tab to go from the first control on a tab back to the tab itself or,
+occasionally, when it is the first control to have the focus when the form
+is opened. Moving from one tab to another or moving the focus to a control
+outside the tab control and then back to the tab control will get it to
+start showing the status bar text for the tabs again.</li>
+</ul>
+
+<p>One final note regarding the designer: When setting the status bar text
+for the tab pages, be sure to actually click on a part of the tab page to
+ensure that it is selected. If you just click the tab in the tab control's
+header to select it, the tab control will have the focus in the designer
+and you may inadvertently modify the tab control's status bar text rather
+than the text for the tab page.</p>
+
+<h2>Status Text on Tool Strip Items</h2>
+Under .NET 2.0, status bar text can be specified for menu strip, tool
+strip, and status strip items.  However, there are a few limitations with
+no workarounds.
+
+<ul>
+    <li>For menu strip items, text is only displayed when the mouse moves in
+and out of the menu items.  If navigating the menus with the keyboard, the
+status text is not displayed.  Unfortunately, the menu strip items do not fire
+selection events like the menu items from .NET 1.1 so it is not possible to
+display text for them in this situation.</li>
+
+    <li>For tool strip and status strip items, status text will be shown when
+you move the mouse over them.  In addition if you tab into a combo box or a
+text box the status text will update.  However, when tabbing onto a button
+control, no status text will be displayed.  As with the menu strip items,
+there is no selection event to hook to enable it.
+
+    <li>With the prior version of this control under .NET 1.1, it was
+always possible to restore the prior text when moving from a form, to the
+menu, and back to the form.  However, under .NET 2.0 with the above
+limitations I had to make a compromise and rework how the original status
+bar text was restored.  This affects the component under both .NET 1.1 and
+.NET 2.0. As such, there are some cases where when moving from a menu back
+to the form, the status bar text for the current control will not be
+displayed.  Instead, the default text will appear in the status bar.
+Tabbing out of the control and back in will display the correct text again.
+</ul>
+
+<h2>How It Works</h2>
+To create an extender provider, you need to derive a class from
+<code>Component</code> and implement the <code>IExtenderProvider</code>
+interface. The interface contains a single method (<code>CanExtend</code>)
+that returns <code lang=cs>true</code> or <code lang=cs>false</code> based
+on whether or not it can provide its properties to the object it receives
+as a parameter. In this case, we check the type of the passed object to see
+if it is the one that we can extend.
+
+<p>Throughout the following code, the <code>DOTNET_20</code> definition is
+used to conditionally compile code related to the modifications needed to
+support the .NET 2.0 components.  It is defined at the top of the file.
+Comment it out to build the code under .NET 1.1.</p>
+
+<pre lang=cs>
+public class StatusBarTextProvider : Component, IExtenderProvider
+{
+    /// &lt;summary&gt;
+    /// Default constructor
+    /// &lt;/summary&gt;
+    public StatusBarTextProvider()
+    {
+        htOptions = new Hashtable(25);
+    }
+
+    /// &lt;summary&gt;
+    /// Constructor. This one takes a reference to a container.
+    /// &lt;/summary&gt;
+    /// &lt;param name="container"&gt;The container for the
+    /// component&lt;/param&gt;
+    public StatusBarTextProvider(IContainer container) : this()
+    {
+        if(container != null)
+            container.Add(this);
+    }
+
+    /// &lt;summary&gt;
+    /// This is implemented to determine if the component can be
+    /// extended with the extra properties.
+    /// &lt;/summary&gt;
+    /// &lt;param name="extendee"&gt;The object to check&lt;/param&gt;
+    public bool CanExtend(object extendee)
+    {
+        // MenuItem is a Component.  LinkLabel derives from Label but
+        // it can gain the focus and thus can be extended.  For .NET 2.0,
+        // we also support the ToolStripItem component.
+#if !DOTNET_20
+        if(extendee is MenuItem || extendee is LinkLabel)
+#else
+        if(extendee is MenuItem || extendee is LinkLabel ||
+          extendee is ToolStripItem)
+#endif
+            return true;
+
+        // Non-Control types, Form, and these specific controls can't be
+        // extended as it doesn't make sense for them as they don't gain
+        // the focus needed to display the text.
+        if(!(extendee is Control) || extendee is Form ||
+          extendee is Label || extendee is PictureBox ||
+          extendee is ProgressBar || extendee is ScrollBar ||
+          extendee is Splitter || extendee is StatusBar ||
+#if !DOTNET_20
+          extendee is ToolBar)
+#else
+          extendee is ToolBar || extendee is ToolStrip)
+#endif
+            return false;
+
+        // All other Control types can be extended
+        return true;
+    }
+}
+</pre>
+
+<p>In addition you need to specify the <code>ProvideProperty</code>
+attributes on the class for each extended property that you will provide.
+The attribute takes the name of the property and the type to which it
+applies. In the case of the <code>StatusBarTextProvider</code> I chose to
+specify <code>Component</code> as the type so that it can be applied in a
+generic fashion to menu items, controls, and tool strip items alike.</p>
+
+<pre lang=cs>
+[ProvideProperty("StatusBarText", typeof(Component)),
+ ProvideProperty("ShowAsBlank", typeof(Component))]
+public class StatusBarTextProvider : Component, IExtenderProvider
+{
+    ... class code ...
+}
+</pre>
+
+<p>The next step is to actually implement the code for the provided
+properties. Although they act like properties in the designer, you actually
+create two methods (a GetXXX and a SetXXX method where XXX is the name of
+the property). The Get method receives a reference to the object that is
+being extended. The Set method receives a reference to the object that is
+being extended and a value for the extended property. The type for the
+object should match the type specified in the attribute. The type for the
+value parameter received by the Set method can be any type that you need.
+Internally, you are free to track and store the values as you see fit. The
+easiest approach is to create a hash table and use the object as the key
+and the value parameter as the value for the hash table entry. If you are
+providing multiple properties as in the case of the
+<code>StatusBarTextProvider</code>, it is worthwhile to create a separate
+class for the properties and use that as the item to store in the hash
+table.</p>
+
+<pre lang=cs>
+/// &lt;summary&gt;
+/// This class contains the options for the items that need status
+/// bar text.
+/// &lt;/summary&gt;
+private sealed class PropertyOptions
+{
+    //============================================================
+    // Private data member
+
+    private string message;
+    private bool showAsBlank;
+
+    //============================================================
+    // Properties
+
+    /// &lt;summary&gt;
+    /// Set or get the message text
+    /// &lt;/summary&gt;
+    public string Message
+    {
+        get { return message; }
+        set { message = value; }
+    }
+
+    /// &lt;summary&gt;
+    /// The "show as blank" flag
+    /// &lt;/summary&gt;
+    public bool ShowAsBlank
+    {
+        get { return showAsBlank; }
+        set { showAsBlank = value; }
+    }
+
+    //============================================================
+    // Methods, etc.
+
+    /// &lt;summary&gt;
+    /// Constructor
+    /// &lt;/summary&gt;
+    /// &lt;param name="msg"&gt;The message text to display&lt;/param&gt;
+    /// &lt;overloads&gt;There are two overloads for the
+    /// constructor&lt;/overloads&gt;
+    public PropertyOptions(string msg)
+    {
+        message = msg;
+    }
+
+    /// &lt;summary&gt;
+    /// Constructor
+    /// &lt;/summary&gt;
+    /// &lt;param name="showBlank"&gt;The "show as blank"
+    /// flag&lt;/param&gt;
+    public PropertyOptions(bool showBlank)
+    {
+        showAsBlank = showBlank;
+    }
+}
+</pre>
+
+<p>Here is an example of a Get method for the <code>StatusBarText</code>
+property. After some checks to make sure the passed component is valid and
+is supported, it simply checks to see if the hash table contains the
+component. If it does, it casts the value from the hash table to our
+property options class from above and returns the message text from it. If
+the hash table does not contain the component yet, it returns <code
+lang=cs>null</code>. Also note that you can provide design-time attributes
+on the Get method such as <code>Category</code>, <code>DefaultValue</code>,
+etc. to provide better designer support for the extender provider.</p>
+
+<pre lang=cs>
+/// &lt;summary&gt;
+/// This is used to retrieve the status bar text for a component.
+/// &lt;/summary&gt;
+/// &lt;param name="comp"&gt;The component for which to get the
+/// status bar text&lt;/param&gt;
+/// &lt;returns&gt;The message string if found or null if not
+/// found&lt;/returns&gt;
+[Category("StatusBar"), Localizable(true), DefaultValue(null),
+  Description("The status bar text for the item")]
+public string GetStatusBarText(Component comp)
+{
+    if(comp == null)
+        throw new ArgumentException("Component cannot be null");
+
+#if !DOTNET_20
+    if(!(comp is MenuItem) && !(comp is Control))
+#else
+    if(!(comp is MenuItem) && !(comp is Control) &&
+      !(comp is ToolStripItem))
+#endif
+        throw new ArgumentException(
+            "Component must be a MenuItem, ToolStripItem, " +
+                "or a Control");
+
+    if(htOptions.Contains(comp))
+        return ((PropertyOptions)htOptions[comp]).Message;
+
+    return null;
+}
+</pre>
+
+<p>The Set method works in a similar fashion. If the hash table does not
+contain the component, you create an instance of the property options
+class, store the value in it, and add it to the hash table. If the
+component is already in the hash table, you simply retrieve the existing
+settings and update them with the new value.</p>
+
+<p>In the case of <code>StatusBarTextProvider</code>, things get a little
+more complicated. In addition to storing the property value we also need to
+hook up several events so that we can adjust the status bar text as the
+various controls and menu items gain and lose the focus. The first part is
+fairly straightforward. We check to make sure the object is valid and
+create some helper variables that will let us determine the type of the
+object so that we can hook up or disconnect the appropriate events.</p>
+
+<pre lang=cs>
+/// &lt;summary&gt;
+/// This stores the status bar text for the specified component.
+/// &lt;/summary&gt;
+/// &lt;param name="comp"&gt;The component associated with the
+/// message&lt;/param&gt;
+/// &lt;param name="message"&gt;The status bar text for the
+/// component&lt;/param&gt;
+public void SetStatusBarText(Component comp, string message)
+{
+    if(comp == null)
+        throw new ArgumentException("Component cannot be null");
+
+    MenuItem mi = comp as MenuItem;
+    Control ctl = comp as Control;
+    TabControl tc = comp as TabControl;
+
+#if DOTNET_20
+    ToolStripItem ti = comp as ToolStripItem;
+    ToolStripControlHost tsch = comp as ToolStripControlHost;
+
+    if(mi == null && ti == null && ctl == null)
+#else
+    if(mi == null && ctl == null)
+#endif
+        throw new ArgumentException(
+            "Component must be a MenuItem, " +
+            "ToolStripItem, or a Control");
+
+    if(message != null && message.Length == 0)
+        message = null;
+</pre>
+
+<p>If the hash table does not already contain the object, we create a new
+property object containing the message and add it to the hash table using
+the object as the key. Then, based on the object type, we hook up one or
+more event handlers that will display the appropriate status bar text. This
+step is skipped at design-time though. For <code>MenuItem</code> objects,
+we hook up the <code>Select</code> event.  For <code>ToolStripItem</code>
+objects, we hook up the <code>MouseEnter</code> and <code>MouseLeave</code>
+events.  If the tool strip item is a <code>ToolStripControlHost</code>
+(i.e. it hosts a control such as a combo box or text box), we also hook up
+the <code>Enter</code> and <code>Leave</code> events so that status text is
+shown when tabbing into the control.  For all other standard form controls
+we hook up the <code>GotFocus</code>, <code>Enter</code>, and
+<code>Leave</code> events. Some controls such as <code>Panel</code> cannot
+receive the focus but are entered which is why both <code>GotFocus</code>
+and <code>Enter</code> are used.</p>
+
+<p>If it is a tab control, we also have to hook up the
+<code>SelectedIndexChanged</code> event to allow displaying the status bar
+text for it and its pages. The tab control and tab pages do not reliably
+show their status bar text due to the way they handle the focus. As such,
+this event is needed to update the text. Note that it will not show the
+text if you use Shift+Tab to go from the first control on a tab back to the
+tab in the tab control itself or when it is the first control to have the
+focus. You must also set <code>ShowAsBlank</code> or
+<code>StatusBarText</code> on the tab control itself if you want to have
+status bar text appear for the tab pages themselves (i.e. when the tab
+itself has the focus).</p>
+
+<pre lang=cs>
+if(!htOptions.Contains(comp))
+{
+    htOptions.Add(comp, new PropertyOptions(message));
+
+    if(!this.DesignMode && message != null)
+        if(mi != null)
+            mi.Select += new EventHandler(Menu_Select);
+        else
+#if DOTNET_20
+            if(ti != null)
+            {
+                ti.MouseEnter += new EventHandler(Control_Enter);
+                ti.MouseLeave += new EventHandler(Control_Leave);
+
+                // If it's a control host, hook the enter and
+                // leave events too.
+                if(tsch != null)
+                {
+                    tsch.Enter += new EventHandler(Control_Enter);
+                    tsch.Leave += new EventHandler(Control_Leave);
+                }
+            }
+            else
+#endif
+            {
+                ctl.GotFocus += new EventHandler(Control_Enter);
+                ctl.Enter += new EventHandler(Control_Enter);
+                ctl.Leave += new EventHandler(Control_Leave);
+
+                // See article notes above
+                if(tc != null)
+                    tc.SelectedIndexChanged += new EventHandler(
+                        Control_Enter);
+            }
+}
+</pre>
+
+<p>If the object already exists in the hash table, we need to update the
+value in the existing property settings. In addition, if the property is
+cleared (i.e. set to a <code lang=cs>null</code> or empty string), we need
+to disconnect the events. Again, this is skipped if it is done at
+design-time.</p>
+
+<pre lang=cs>
+else
+{
+    PropertyOptions po = (PropertyOptions)htOptions[comp];
+    po.Message = message;
+
+    if(!this.DesignMode && message == null &&
+      po.ShowAsBlank == false)
+        if(mi != null)
+            mi.Select -= new EventHandler(Menu_Select);
+        else
+#if DOTNET_20
+            if(ti != null)
+            {
+                ti.MouseEnter -= new EventHandler(Control_Enter);
+                ti.MouseLeave -= new EventHandler(Control_Leave);
+
+                // If it's a control host, unhook the enter and
+                // leave events too.
+                if(tsch != null)
+                {
+                    tsch.Enter -= new EventHandler(Control_Enter);
+                    tsch.Leave -= new EventHandler(Control_Leave);
+                }
+            }
+            else
+#endif
+            {
+                ctl.GotFocus -= new EventHandler(Control_Enter);
+                ctl.Enter -= new EventHandler(Control_Enter);
+                ctl.Leave -= new EventHandler(Control_Leave);
+
+                if(tc != null)
+                    tc.SelectedIndexChanged -= new EventHandler(
+                        Control_Enter);
+            }
+}
+</pre>
+
+<h2>The Menu Item Event Handlers</h2>
+The event handlers are where most of the action takes place. For menu
+items, the <code>Menu_Select</code> event handles setting of the status bar
+text for the item. In addition, the first time it is called, it also hooks
+up an event handler on the parent form's <code>MenuComplete</code> event so
+that it can restore the text that was in the status bar prior to the item's
+text. The <code>StatusBar</code>, <code>CurrentStatusBarText</code>,
+<code>ItemText</code>, and <code>StatusBarDefaultText</code> properties are
+used to obtain references to the current status bar, its current text, the
+item's text, and the default status bar text based on the current settings
+(i.e. whether it is using the application status bar or an instance in a
+dialog box).
+
+<pre lang=cs>
+// This is handled to display status bar text for a MenuItem
+// component.
+private void Menu_Select(object sender, EventArgs e)
+{
+    if(this.StatusBar == null || !htOptions.Contains(sender))
+        return;
+
+    // Hook the MenuComplete event on first use to restore
+    // the existing status bar text.
+    if(!hookedMenuEvents)
+    {
+        Form frm = this.StatusBarParentForm;
+
+        if(frm != null)
+        {
+            frm.MenuComplete += new EventHandler(
+                Form_MenuComplete);
+            hookedMenuEvents = true;
+        }
+    }
+
+    this.CurrentStatusBarText = this.ItemText(sender);
+}
+
+// This is handled so that the old status bar text is restored
+// when the component status bar text is no longer needed.
+private void Form_MenuComplete(object sender, System.EventArgs e)
+{
+    if(this.StatusBar == null)
+        return;
+
+    this.CurrentStatusBarText = this.StatusBarDefaultText;
+}
+</pre>
+
+<h2>Other Control Event Handlers</h2>
+For all other controls, the <code>Control_Enter</code> and
+<code>Control_Leave</code> events are used. On first use, the
+<code>Control_Enter</code> handler hooks up events on the parent form's
+<code>Activated</code>, <code>Deactivated</code>, and <code>Closed</code>
+events so that the existing status bar text can be restored.
+
+<pre lang=cs>
+// This is handled to display status bar text when a control
+// is entered or gains the focus.
+private void Control_Enter(object sender, EventArgs e)
+{
+    if(this.StatusBar == null || !htOptions.Contains(sender))
+        return;
+
+    // Hook the Closed event to reset the status bar text
+    // when the form is closed.  When it's modal, it doesn't
+    // always get the Leave event to reset the text.  The
+    // Activated and Deactivated events are also hooked to
+    // set and restore the text.
+    if(!hookedFormEvent && this.StatusBar != null)
+    {
+        Control p = sender as Control;
+
+        if(p != null)
+            p = p.Parent;
+#if DOTNET_20
+        else    // It's a control hosted in a tool strip item
+            p = ((ToolStripItem)sender).Owner.Parent;
+#endif
+
+        while(p != null)
+        {
+            Form frm = p as Form;
+
+            if(frm != null)
+            {
+                frm.Activated += new EventHandler(
+                    Form_Activated);
+
+                // Same handler as Form.MenuComplete
+                frm.Deactivate += new EventHandler(
+                    Form_MenuComplete);
+                frm.Closed += new EventHandler(
+                    Form_MenuComplete);
+
+                hookedFormEvent = true;
+                break;
+            }
+
+            p = p.Parent;
+        }
+    }
+
+    this.CurrentStatusBarText = this.ItemText(sender);
+}
+
+// This is handled to display status bar text when a control
+// is left.
+private void Control_Leave(object sender, EventArgs e)
+{
+    if(this.StatusBar == null || !htOptions.Contains(sender))
+        return;
+
+    this.CurrentStatusBarText = this.StatusBarDefaultText;
+}
+
+// This is handled to redisplay the status bar text for the
+// form's focused control when activated.
+private void Form_Activated(object sender, System.EventArgs e)
+{
+    Form frm = sender as Form;
+
+    if(frm != null && this.StatusBar != null)
+    {
+        Control ctl = frm.ActiveControl;
+
+        // Nested controls may not have any so walk up
+        // the parent chain to see if they do.
+        while(ctl != null && !htOptions.Contains(ctl))
+            ctl = ctl.Parent;
+
+        if(ctl != null)
+            this.CurrentStatusBarText = this.ItemText(ctl);
+    }
+}
+</pre>
+
+<h2>Demonstration Applications</h2>
+A Windows Forms application in C# and VB.NET is provided that
+demonstrates the basic use of the status bar text provider.  A version of
+each is provided for .NET 1.1 and .NET 2.0. The .NET 1.1 version
+demonstrates the use of the provider with menu items and with controls in
+modal and non-modal forms.  The .NET 2.0 version demonstrates the use of
+the provider with menu strip, tool strip, and status strip items along with
+standard controls in modal and non-modal forms.  It also demonstrates the
+use of the extra <code>StatusLabel</code> and <code>ProgressBar</code>
+properties to access a status label and progress bar in the main status
+strip from within the demo dialog box form.
+
+<p>For either version, use the <b>File | Load</b> option to open non-modal
+instances of the demo form. Use the <b>Help | About</b> option to open a
+modal instance of the demo form. The demo form allows you to switch between
+using the application's status bar/status strip and the demo form's status
+bar for displaying the messages.</p>
+
+<h2>Revision History</h2>
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+    <td valign="top">06/26/2006</td>
+    <td width="50">&nbsp;</td>
+    <td>Added new overloaded static methods to the
+<code>StatusBarTextProvider</code> to make it easier to utilize the controls
+assigned to its <code>StatusLabel</code> and <code>ProgressBar</code>
+properties.</td>
+  </tr>
+  <tr>
+    <td colspan="3">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top">01/28/2006</td>
+    <td width="50">&nbsp;</td>
+    <td>Updated the component to support the new .NET 2.0 menu strip,
+tool strip, and status strip controls and their related tool strip item
+components.
+        <p>Changed the data type on the <code>ApplicationStatusBar</code>
+and <code>InstanceStatusBar</code> properties to <code>object</code> to
+support specifying either a status bar object or a toolstrip item that will
+display the text.  This change may break existing code if it relies on the
+data type being <code>StatusBar</code> as in the prior version.</p>
+        <p>Reworked how the prior text was restored due to the way the new tool
+strip components work.  It now utilizes the new
+<code>ApplicationDefaultText</code> and <code>InstanceDefaultText</code>
+properties.</p>
+        <p>Added new <code>StatusLabel</code> and <code>ProgressBar</code>
+properties for use with .NET 2.0 to provide convenient access to the
+tool strip items they represent from anywhere within the application.</p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3">&nbsp;</td>
+  </tr>
+  <tr>
+    <td valign="top">11/11/2005</td>
+    <td width="50">&nbsp;</td>
+    <td>Initial release</td>
+  </tr>
+</table>
+
+<!-------------------------------    That's it!   --------------------------->
+</body>
+</html>

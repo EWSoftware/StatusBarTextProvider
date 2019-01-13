@@ -1,0 +1,37 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatusBarText", "StatusBarText.csproj", "{C143D96E-B74D-4ED0-B069-773B7D60AC71}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatusBarTextTestCS", "StatusBarTextTestCS\StatusBarTextTestCS.csproj", "{46D858EA-1FC1-4722-9F93-0614F390F551}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "StatusBarTextTestVB", "StatusBarTextTestVB\StatusBarTextTestVB.vbproj", "{929FD4DB-5DC3-4926-B56C-67E917B38C54}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{C143D96E-B74D-4ED0-B069-773B7D60AC71}.Debug.ActiveCfg = Debug|.NET
+		{C143D96E-B74D-4ED0-B069-773B7D60AC71}.Debug.Build.0 = Debug|.NET
+		{C143D96E-B74D-4ED0-B069-773B7D60AC71}.Release.ActiveCfg = Release|.NET
+		{C143D96E-B74D-4ED0-B069-773B7D60AC71}.Release.Build.0 = Release|.NET
+		{46D858EA-1FC1-4722-9F93-0614F390F551}.Debug.ActiveCfg = Debug|.NET
+		{46D858EA-1FC1-4722-9F93-0614F390F551}.Debug.Build.0 = Debug|.NET
+		{46D858EA-1FC1-4722-9F93-0614F390F551}.Release.ActiveCfg = Release|.NET
+		{46D858EA-1FC1-4722-9F93-0614F390F551}.Release.Build.0 = Release|.NET
+		{929FD4DB-5DC3-4926-B56C-67E917B38C54}.Debug.ActiveCfg = Debug|.NET
+		{929FD4DB-5DC3-4926-B56C-67E917B38C54}.Debug.Build.0 = Debug|.NET
+		{929FD4DB-5DC3-4926-B56C-67E917B38C54}.Release.ActiveCfg = Release|.NET
+		{929FD4DB-5DC3-4926-B56C-67E917B38C54}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
